@@ -1,0 +1,39 @@
+name: Vendor ydyp core
+
+on:
+  push:
+    paths:
+      - '.github/workflows/vendor-ydyp.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  vendor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch upstream China Mobile Cloud core
+        run: |
+          mkdir -p upstream
+          curl -fL --retry 3 --connect-timeout 20 \
+            https://raw.githubusercontent.com/smallfawn/QLScriptPublic/main/daily/ydyp.js \
+            -o upstream/ydyp.core
+          test -s upstream/ydyp.core
+
+      - name: Commit vendored core
+        run: |
+          if git diff --quiet -- upstream/ydyp.core && git ls-files --error-unmatch upstream/ydyp.core >/dev/null 2>&1; then
+            echo 'ydyp.core already up to date'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add upstream/ydyp.core
+          git commit -m 'vendor: copy upstream ydyp core'
+          git push
