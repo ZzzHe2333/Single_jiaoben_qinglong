@@ -4,8 +4,6 @@
   "private": true,
   "description": "QingLong single-script collection",
   "dependencies": {
-    "axios": "^1.7.0",
-    "fetch-cookie": "^3.1.0",
-    "node-fetch": "2"
+    "axios": "^1.7.0"
   }
 }
